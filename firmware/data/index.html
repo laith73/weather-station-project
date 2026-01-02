@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Station Project</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e9eef7;
+            margin: 20px;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .status-bar {
+            background-color: #3498db;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 0 auto 20px;
+            max-width: 600px;
+            font-weight: 500;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .data-card {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .data-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+
+        .data-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .data-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #e74c3c;
+        }
+
+        #timestamp {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h1>Weather Station Dashboard</h1>
+    <div class="dashboard-container">
+        <div class="data-card">
+            <div class="data-title">Temperature (°C)</div>
+            <div class="data-value" id="temp">--</div>
+        </div>
+        <div class="data-card">
+            <div class="data-title">Humidity (%)</div>
+            <div class="data-value" id="hum">--</div>
+        </div>
+        <div class="data-card">
+            <div class="data-title">Pressure (hPa)</div>
+            <div class="data-value" id="pres">--</div>
+        </div>
+        <div class="data-card">
+            <div class="data-title">UV Index</div>
+            <div class="data-value" id="uv">--</div>
+        </div>
+        <div class="data-card">
+            <div class="data-title">Ambient Light</div>
+            <div class="data-value" id="amb_als">--</div>
+        </div>
+        <div class="data-card">
+            <div class="data-title">Infrared Light</div>
+            <div class="data-value" id="amb_ir">--</div>
+        </div>
+        <div class="data-card">
+            <div class="data-title">Proximity</div>
+            <div class="data-value" id="proximity">--</div>
+        </div>
+        <div class="data-card">
+            <div class="data-title">Latitude</div>
+            <div class="data-value" id="lat">--</div>
+        </div>
+        <div class="data-card">
+            <div class="data-title">Longitude</div>
+            <div class="data-value" id="lng">--</div>
+        </div>
+        <div class="data-card">
+            <div class="data-title">Altitude (m)</div>
+            <div class="data-value" id="alt">--</div>
+        </div>
+        <div class="data-card">
+            <div class="data-title">Satellites</div>
+            <div class="data-value" id="sat">--</div>
+        </div>
+        <div class="data-card">
+            <div class="data-title">HDOP</div>
+            <div class="data-value" id="hdop">--</div>
+        </div>
+    </div>
+    <div id="timestamp"> Last update: -- </div>
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('/data');
+                const data = await response.json();
+
+                document.getElementById('temp').textContent = data.temperature.toFixed(1);
+                document.getElementById('hum').textContent = data.humidity.toFixed(1);
+                document.getElementById('pres').textContent = data.pressure.toFixed(2);
+                document.getElementById('uv').textContent = data["UV-Index"].toFixed(1);
+                document.getElementById('amb_als').textContent = data["Ambient Light"];
+                document.getElementById('amb_ir').textContent = data["Infrared Light"];
+                document.getElementById('proximity').textContent = data.proximity;
+                document.getElementById('lat').textContent = data.latitude.toFixed(6);
+                document.getElementById('lng').textContent = data.longitude.toFixed(6);
+                document.getElementById('alt').textContent = data.altitude.toFixed(2);
+                document.getElementById('sat').textContent = data.satellites;
+                document.getElementById('hdop').textContent = data.HDOP.toFixed(2);
+                
+                const now = new Date();
+                document.getElementById("timestamp").textContent = "Last update: " + now.toLocaleTimeString();
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        setInterval(fetchData, 5000); // Fetch every 5 seconds
+        window.addEventListener('load', fetchData);
+    </script>
+</body>
+</html>
